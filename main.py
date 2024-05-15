@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 from PIL import Image, ImageDraw, ImageFont
+
+
 import base64
 app = Flask(__name__)
 # Pass the data
 users = [
-    {'name': ' ', 'email': ' ', 'gender': ' '},
-   # {'name': ' ', 'email': ' ', 'gender': ' '},
+    {'name': ' ', 'email': ' ', 'gender': ' '}
 ]
 
 @app.route('/generate_avatar', methods=['POST'])
