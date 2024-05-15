@@ -1,33 +1,40 @@
-#!flask/bin/python
-import os
-from flask import Flask
-from flask import request
-import pandas as pd
-from sklearn import linear_model
-import pickle
-
-# creating and saving some model
-reg_model = linear_model.LinearRegression()
-reg_model.fit([[1.,1.,5.], [2.,2.,5.], [3.,3.,1.]], [0.,0.,1.])
-pickle.dump(reg_model, open('some_model.pkl', 'wb'))
-
+from flask import Flask, request, jsonify
+from PIL import Image, ImageDraw, ImageFont
+import base64
 app = Flask(__name__)
+# Pass the data
+users = [
+    {'name': ' ', 'email': ' ', 'gender': ' '},
+   # {'name': ' ', 'email': ' ', 'gender': ' '},
+]
 
-@app.route('/isAlive')
-def index():
-    return "true"
-
-@app.route('/prediction/api/v1.0/some_prediction', methods=['GET'])
-def get_prediction():
-    feature1 = float(request.args.get('f1'))
-    feature2 = float(request.args.get('f2'))
-    feature3 = float(request.args.get('f3'))
-    loaded_model = pickle.load(open('some_model.pkl', 'rb'))
-    prediction = loaded_model.predict([[feature1, feature2, feature3]])
-    return str(prediction)
-
+@app.route('/generate_avatar', methods=['POST'])
+def generate_avatar():
+    user_name = request.form.get('name')
+    user_gender = request.form.get('gender')
+    # Get user's name
+    initials = user_name[:2].upper()  # Take the first two letters as initials
+    if user_gender.lower() == 'male':
+        background_color = '#1976D2'  # Blue for male
+    elif user_gender.lower() == 'female':
+        background_color = '#E91E63'  # Pink for female
+    else:
+        background_color = '#9E9E9E'  # Grey for unspecified gender
+    # Create a circular avatar image
+    img = Image.new('RGB', (150, 150), color=background_color)
+    img_draw = ImageDraw.Draw(img)
+    img_draw.text((20, 60), initials, fill='white', font=ImageFont.load_default())
+    # Convert image to base64
+    img_bytes = img.tobytes()
+    img_base64 = base64.b64encode(img_bytes).decode()
+    return jsonify({'avatar': img_base64})
+@app.route('/search_users', methods=['GET'])
+def search_users():
+    query = request.args.get('q')  # Get search query from request URL parameter
+    # Search for users by name, email, and location
+    results = [user for user in users if query.lower() in user['name'].lower()
+               or query.lower() in user['email'].lower()
+               or query.lower() in user['location'].lower()]
+    return jsonify({'results': results})
 if __name__ == '__main__':
-    if os.environ['ENVIRONMENT'] == 'production':
-        app.run(port=80,host='0.0.0.0')
-    if os.environ['ENVIRONMENT'] == 'local':
-        app.run(port=5000,host='0.0.0.0')
+    app.run(debug=True)
