@@ -1,31 +1,50 @@
-## DEPRECATED
-This repository is no longer maintained and has been archived. Feel free to browse the code, but please migrate to other solutions.
 
-## python-flask-docker-sklearn-template
-A simple example of python api for real time machine learning.
-On init, a simple linear regression model is created and saved on machine. On request arrival for prediction, the simple model is loaded and returning prediction.    
-For more information read [this post](https://blog.solutotlv.com/deployed-scikit-learn-model-flask-docker/?utm_source=Github&utm_medium=python-flask-sklearn-docker-template)
+# Flask Avatar Generator and User Search
 
-# requirements  
-docker installed
+This Flask application provides two endpoints: one for generating circular avatars based on user data and another for searching users by name, email, and location.
 
-# Run on docker - local 
-docker build . -t {some tag name}  -f ./Dockerfile_local  
-detached : docker run -p 3000:5000 -d {some tag name}  
-interactive (recommended for debug): docker run -p 3000:5000 -it {some tag name}  
+## Installation
 
-# Run on docker - production 
-Using uWSGI and nginx for production  
-docker build . -t {some tag name}   
-detached : docker run -p 3000:80 -d {some tag name}  
-interactive (recommended for debug): docker run -p 3000:80 -it {some tag name}  
+1. Clone this repository to your local machine.
+2. Install the required dependencies using pip:
+   ```
+   pip install flask pillow
+   ```
 
-# Run on local computer
-python -m venv env  
-source env/bin/activate  
-python -m pip install -r ./requirements.txt  
-python main.py  
+## Usage
 
-# Use sample api  
-127.0.0.1:3000/isAlive  
-127.0.0.1:3000/prediction/api/v1.0/some_prediction?f1=4&f2=4&f3=4  
+1. Run the Flask app:
+   ```
+   python main.py
+   ```
+2. Access the following endpoints:
+
+   - **Generate Avatar** (POST): `/generate_avatar`
+     - Input: User name and gender (male, female, or unspecified)
+     - Output: Base64-encoded circular avatar image
+
+   - **Search Users** (GET): `/search_users?q=<search_query>`
+     - Input: Query parameter (`q`) for searching users
+     - Output: List of matching user data
+
+## Example Requests
+
+1. Generate Avatar:
+   - POST request to `http://localhost:5000/generate_avatar`
+   - Form data: `name=John Doe` and `gender=male`
+
+2. Search Users:
+   - GET request to `http://localhost:5000/search_users?q=John`
+   - Returns users matching the query (by name, email, or location)
+
+## Notes
+
+- Customize the avatar generation logic and user data as needed.
+- Ensure proper error handling and validation in a production environment.
+
+---
+
+Feel free to enhance this README with additional details, deployment instructions, or any other relevant information. Good luck with your project! 😊  
+
+---
+**Note**: The provided README is a starting point. You can expand it further by adding sections like "Deployment," "Contributing," "License," and any other relevant information specific to your project.
